@@ -8,9 +8,9 @@ const rl = readline.createInterface({
 
 
 const boardData =  {
-  1: {a: 'x', b: '_', c: '_'},
-  2: {a: '_', b: 'x', c: '_'},
-  3: {a: '_', b: '_', c: 'x'}
+  1: {a: '_', b: '_', c: '_'},
+  2: {a: '_', b: '_', c: '_'},
+  3: {a: '_', b: '_', c: '_'}
 }
 
 
@@ -36,7 +36,7 @@ var refreshBoard = function(){
 
 const playersToPieces = {
   'x': '1',
-  'y': '2'
+  'o': '2'
 }
 
 const findRowMatches = function(){
@@ -53,7 +53,7 @@ const findHorizontalMatches = function(){
   let win = false;
   for(let i = 1; i < 4; i++){
     if(boardData[1][lettersToNumbers[i]] === boardData[2][lettersToNumbers[i]] && boardData[2][lettersToNumbers[i]] === boardData[3][lettersToNumbers[i]] && boardData[3][lettersToNumbers[i]] !== '_')
-      win = boardData[1]['a'];
+      win = boardData[1][lettersToNumbers[i]];
   }
   return win;
 }
@@ -66,15 +66,32 @@ const findDiagMatches = function(){
   return win;
 }
 
+const winChecker = function(){
+  let winner = false;
+  if(findRowMatches() !== false){
+    return playersToPieces[findRowMatches()];
+  } 
+  if(findHorizontalMatches() !== false){
+    return playersToPieces[findHorizontalMatches()]
+  } 
+  if(findDiagMatches() !== false){
+    return playersToPieces[findDiagMatches()]
+  } 
+  return false;
+}
+
 
 const PromptMove = function(player = '1', piece = 'x'){
+  if(winChecker() !== false){
+    return console.log(`Player ${winChecker()} wins!`)
+  }
   refreshBoard();
   console.log(boardVisual);
   rl.question(`Player ${player}, what row would you like to place a piece? `, (row)=>{
     rl.question(`Player ${player}, what column would you like to place a piece? `, (column)=>{
       boardData[row][column] = piece;
       if(player === '1'){
-        PromptMove('2', '0');
+        PromptMove('2', 'o');
       } else {
         PromptMove('1', 'x')
       }
@@ -82,6 +99,5 @@ const PromptMove = function(player = '1', piece = 'x'){
   })
 }
 
-console.log(findDiagMatches());
 
-// PromptMove()
+PromptMove()
